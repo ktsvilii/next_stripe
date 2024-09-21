@@ -1,58 +1,9 @@
 import { FC } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check } from 'lucide-react';
-import Link from 'next/link';
-
-enum PopularPlanType {
-  NO = 'NO',
-  YES = 'YES',
-}
-
-interface PricingProps {
-  title: string;
-  popular: PopularPlanType;
-  price: number;
-  description: string;
-  buttonText: string;
-  benefitList: string[];
-  href: string;
-  billing: string;
-}
-
-const pricingList: PricingProps[] = [
-  {
-    title: 'Free',
-    popular: PopularPlanType.NO,
-    price: 0,
-    description: 'Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.',
-    buttonText: 'Get Started',
-    benefitList: ['1 Team member', '2 GB Storage', 'Upto 4 pages', 'Community support', 'lorem ipsum dolor'],
-    href: '/api/auth/login',
-    billing: '/month',
-  },
-  {
-    title: 'Premium',
-    popular: PopularPlanType.YES,
-    price: 10,
-    description: 'Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.',
-    buttonText: 'Buy Now',
-    benefitList: ['4 Team member', '4 GB Storage', 'Upto 6 pages', 'Priority support', 'lorem ipsum dolor'],
-    href: '/api/auth/login',
-    billing: '/month',
-  },
-  {
-    title: 'Enterprise',
-    popular: PopularPlanType.NO,
-    price: 99,
-    description: 'Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.',
-    buttonText: 'Buy Now',
-    benefitList: ['10 Team member', '8 GB Storage', 'Upto 10 pages', 'Priority support', 'lorem ipsum dolor'],
-    href: '/api/auth/login',
-    billing: '/year',
-  },
-];
+import { PopularPlanType, pricingList, PricingProps } from './constants';
+import PaymentLink from './PaymentLink';
 
 export const Pricing: FC = () => {
   return (
@@ -94,9 +45,7 @@ export const Pricing: FC = () => {
             </CardHeader>
 
             <CardContent>
-              <Link href={pricing.href} className={buttonVariants()}>
-                {pricing.buttonText}
-              </Link>
+              <PaymentLink text={pricing.buttonText} href={pricing.href} paymentLink={pricing.paymentLink} />
             </CardContent>
 
             <hr className='w-4/5 m-auto mb-4' />
