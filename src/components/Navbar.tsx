@@ -7,6 +7,8 @@ import { ModeToggle } from './ModeToggle';
 import { buttonVariants } from './ui/button';
 import Link from 'next/link';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+import { useQuery } from '@tanstack/react-query';
+import checkIsPremiumUser from '@/app/premium/actions';
 
 interface RouteProps {
   href: string;
@@ -29,8 +31,14 @@ const routeList: RouteProps[] = [
 ];
 
 export const Navbar: FC = () => {
-  const isSubscribed = true;
   const { isAuthenticated } = useKindeBrowserClient();
+  const { data } = useQuery({
+    queryKey: ['isPremiumUser'],
+    queryFn: async () => checkIsPremiumUser(),
+  });
+
+  const isPremiumUser = data?.isPremiumUser;
+
   return (
     <header
       className='sticky border-b-[1px] top-0 z-40 w-full  dark:border-b-slate-700 overflow-x-hidden
@@ -60,7 +68,7 @@ export const Navbar: FC = () => {
                 {route.label}
               </Link>
             ))}
-            {isAuthenticated && isSubscribed && (
+            {isAuthenticated && isPremiumUser && (
               <Link
                 rel='noreferrer noopener'
                 href={'#'}
@@ -96,7 +104,7 @@ export const Navbar: FC = () => {
               </Link>
             )}
 
-            {isAuthenticated && isSubscribed && (
+            {isAuthenticated && isPremiumUser && (
               <Link
                 rel='noreferrer noopener'
                 href='/premium'
