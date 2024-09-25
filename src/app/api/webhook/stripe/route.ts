@@ -95,13 +95,20 @@ export async function POST(req: Request) {
           where: { customerId: subscription.customer as string },
         });
         if (user) {
+          const wasIntentionalTermination = Boolean(subscription.canceled_at);
+
           await prisma.user.update({
             where: { id: user.id },
             data: { plan: PLAN.FREE },
           });
           await prisma.subscription.update({
             where: { userId: user.id },
-            data: { earlyTerminated: true, isActive: false, terminatedAt: new Date(), updatedAt: new Date() },
+            data: {
+              earlyTerminated: wasIntentionalTermination,
+              isActive: false,
+              terminatedAt: wasIntentionalTermination ? new Date() : null,
+              updatedAt: new Date(),
+            },
           });
         } else {
           console.error('User not found for the subscription deleted event.');
