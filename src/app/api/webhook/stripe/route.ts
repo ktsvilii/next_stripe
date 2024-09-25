@@ -1,12 +1,8 @@
 import prisma from '@/db/prisma';
 import { stripe } from '@/lib/stripe';
+import { EVENT_TYPES, PLAN, PLAN_FREQUENCY_UPDATE } from '@/lib/types';
 
 import Stripe from 'stripe';
-
-const enum EVENT_TYPES {
-  CHECKOUT_SESSION_COMPLETED = 'checkout.session.completed',
-  CHECKOUT_SUBSCRIPTION_DELETED = 'customer.subscription.deleted',
-}
 
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
 
@@ -23,7 +19,6 @@ export async function POST(req: Request) {
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
   }
 
-  // Handle the event
   try {
     switch (event.type) {
       case EVENT_TYPES.CHECKOUT_SESSION_COMPLETED:
@@ -66,12 +61,18 @@ export async function POST(req: Request) {
                   userId: user.id,
                   startDate: new Date(),
                   endDate: endDate,
-                  plan: 'premium',
-                  period: priceId === process.env.STRIPE_YEARLY_PRICE_ID! ? 'yearly' : 'monthly',
+                  plan: PLAN.PREMIUM,
+                  period:
+                    priceId === process.env.STRIPE_YEARLY_PRICE_ID!
+                      ? PLAN_FREQUENCY_UPDATE.YEARLY
+                      : PLAN_FREQUENCY_UPDATE.MONTHLY,
                 },
                 update: {
-                  plan: 'premium',
-                  period: priceId === process.env.STRIPE_YEARLY_PRICE_ID! ? 'yearly' : 'monthly',
+                  plan: PLAN.PREMIUM,
+                  period:
+                    priceId === process.env.STRIPE_YEARLY_PRICE_ID!
+                      ? PLAN_FREQUENCY_UPDATE.YEARLY
+                      : PLAN_FREQUENCY_UPDATE.MONTHLY,
                   startDate: new Date(),
                   endDate: endDate,
                 },
@@ -79,13 +80,32 @@ export async function POST(req: Request) {
 
               await prisma.user.update({
                 where: { id: user.id },
-                data: { plan: 'premium' },
+                data: { plan: PLAN.PREMIUM },
               });
             } else {
               // one_time_purchase
             }
           }
         }
+        break;
+
+      case EVENT_TYPES.CHECKOUT_SUBSCRIPTION_DELETED: {
+        const subscription = await stripe.subscriptions.retrieve((event.data.object as Stripe.Subscription).id);
+        const user = await prisma.user.findUnique({
+          where: { customerId: subscription.customer as string },
+        });
+        if (user) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { plan: PLAN.FREE },
+          });
+        } else {
+          console.error('User not found for the subscription deleted event.');
+          throw new Error('User not found for the subscription deleted event.');
+        }
+
+        break;
+      }
 
       default:
         console.log(`Unhandled event type ${event.type}`);

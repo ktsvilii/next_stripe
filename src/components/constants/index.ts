@@ -1,23 +1,8 @@
-export enum PopularPlanType {
-  NO = 'NO',
-  YES = 'YES',
-}
-
-export interface PricingProps {
-  title: string;
-  popular: PopularPlanType;
-  price: number;
-  description: string;
-  buttonText: string;
-  benefitList: string[];
-  href: string;
-  paymentLink?: string;
-  billing: string;
-}
+import { PLAN, PopularPlanType, PricingProps } from '@/lib/types';
 
 export const pricingList: PricingProps[] = [
   {
-    title: 'Free',
+    title: PLAN.FREE,
     popular: PopularPlanType.NO,
     price: 0,
     description: 'Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.',
@@ -27,7 +12,7 @@ export const pricingList: PricingProps[] = [
     billing: '/month',
   },
   {
-    title: 'Premium',
+    title: PLAN.PREMIUM,
     popular: PopularPlanType.YES,
     price: 9.99,
     description: 'Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.',
@@ -38,7 +23,7 @@ export const pricingList: PricingProps[] = [
     billing: '/month',
   },
   {
-    title: 'Enterprise',
+    title: PLAN.ENTERPRISE,
     popular: PopularPlanType.NO,
     price: 99.99,
     description: 'Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.',

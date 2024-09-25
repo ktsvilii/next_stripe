@@ -9,11 +9,7 @@ import Link from 'next/link';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { useQuery } from '@tanstack/react-query';
 import checkIsPremiumUser from '@/app/premium/actions';
-
-interface RouteProps {
-  href: string;
-  label: string;
-}
+import { RouteProps } from '@/lib/types';
 
 const routeList: RouteProps[] = [
   {
@@ -33,7 +29,7 @@ const routeList: RouteProps[] = [
 export const Navbar: FC = () => {
   const { isAuthenticated } = useKindeBrowserClient();
   const { data } = useQuery({
-    queryKey: ['isPremiumUser'],
+    queryKey: ['checkIsPremiumUser'],
     queryFn: async () => checkIsPremiumUser(),
   });
 
@@ -71,7 +67,7 @@ export const Navbar: FC = () => {
             {isAuthenticated && isPremiumUser && (
               <Link
                 rel='noreferrer noopener'
-                href={'#'}
+                href={process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL!}
                 target='_blank'
                 className={`text-[17px] ${buttonVariants({
                   variant: 'ghost',

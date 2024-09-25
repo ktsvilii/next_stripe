@@ -1,5 +1,6 @@
 'use server';
 import prisma from '@/db/prisma';
+import { PLAN } from '@/lib/types';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 
 export async function checkIsPremiumUser() {
@@ -16,6 +17,6 @@ export async function checkIsPremiumUser() {
     return { success: false };
   }
 
-  return { success: true, isPremiumUser: existingUser.plan === 'premium' };
+  return { success: true, isPremiumUser: existingUser.plan === PLAN.PREMIUM };
 }
 export default checkIsPremiumUser;
