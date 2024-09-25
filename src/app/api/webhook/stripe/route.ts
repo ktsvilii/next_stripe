@@ -99,6 +99,10 @@ export async function POST(req: Request) {
             where: { id: user.id },
             data: { plan: PLAN.FREE },
           });
+          await prisma.subscription.update({
+            where: { userId: user.id },
+            data: { earlyTerminated: true, isActive: false, terminatedAt: new Date(), updatedAt: new Date() },
+          });
         } else {
           console.error('User not found for the subscription deleted event.');
           throw new Error('User not found for the subscription deleted event.');

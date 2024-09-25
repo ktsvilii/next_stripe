@@ -2,8 +2,9 @@ import { FC } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check } from 'lucide-react';
-import { PopularPlanType, pricingList, PricingProps } from './constants';
+import { pricingList } from './constants';
 import PaymentLink from './PaymentLink';
+import { PopularPlanType, PricingProps } from '@/lib/types';
 
 export const Pricing: FC = () => {
   return (

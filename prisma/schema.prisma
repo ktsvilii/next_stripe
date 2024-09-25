@@ -32,16 +32,19 @@ model User {
 }
 
 model Subscription {
-  id     String             @id @default(cuid()) @map("_id")
-  userId String             @unique
-  plan   Plan
-  period SubscriptionPeriod
+  id              String             @id @default(cuid()) @map("_id")
+  userId          String             @unique
+  plan            Plan
+  period          SubscriptionPeriod
+  isActive        Boolean            @default(true)
+  earlyTerminated Boolean            @default(false)
 
-  startDate DateTime @default(now())
-  endDate   DateTime
+  startDate       DateTime           @default(now())
+  endDate         DateTime
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  terminatedAt    DateTime?          
 
-  User User @relation(fields: [userId], references: [id])
+  user            User               @relation(fields: [userId], references: [id])
 }
