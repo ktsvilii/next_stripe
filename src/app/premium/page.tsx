@@ -1,16 +1,17 @@
+'use client';
+
 import { FC } from 'react';
-import prisma from '@/db/prisma';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
-import { PLAN } from '@/lib/types';
+import checkIsPremiumUser from './actions';
+import { useQuery } from '@tanstack/react-query';
 
-const Page: FC = async () => {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
-  if (!user) return redirect('/');
+const Page: FC = () => {
+  const { data } = useQuery({
+    queryKey: ['checkIsPremiumUser'],
+    queryFn: async () => checkIsPremiumUser(),
+  });
 
-  const userProfile = await prisma.user.findUnique({ where: { id: user.id } });
-  if (userProfile?.plan === PLAN.FREE) return redirect('/');
+  if (!data?.isPremiumUser) return redirect('/');
 
   return <div className='max-w-7xl mx-auto'>You are on the premium plan so you can see this page</div>;
 };
