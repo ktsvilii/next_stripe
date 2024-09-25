@@ -1,14 +1,15 @@
 'use server';
 
 import prisma from '@/db/prisma';
-
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 
 export async function checkAuthStatus() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  if (!user) return { success: false };
+  if (!user) {
+    return { success: false };
+  }
 
   const existingUser = await prisma.user.findUnique({ where: { id: user.id } });
 
@@ -23,5 +24,5 @@ export async function checkAuthStatus() {
     });
   }
 
-  return { success: true };
+  return { success: true, user };
 }
